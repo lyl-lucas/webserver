@@ -54,7 +54,7 @@ class WSGIServer(object):
 
         # It's time to call our application callable and get
         # back a result that will become HTTP response body
-        result = self.application(env, self.star_response)
+        result = self.application(env, self.start_response)
 
         # Construct a response and send it back to the client
         self.finish_response(result)
@@ -109,14 +109,14 @@ class WSGIServer(object):
                 response += '{0}:{1}\r\n'.format(*header)
             response += '\r\n'
             for data in result:
-                response += data
+                response += data.decode('utf-8')
             # Print formatted response data a la 'curl -v'
             print(
                 ''.join(
                     '> {line}\n'.format(line=line)
                     for line in response.splitlines()
                 ))
-            self.client_connection.sendall(response)
+            self.client_connection.sendall(response.encode('utf-8'))
         finally:
             self.client_connection.close()
 
